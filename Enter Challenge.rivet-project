@@ -5,236 +5,16 @@ data:
       testSuites: []
       version: 1
   graphs:
-    R5VDQngWVSvfJdVM_R6fk:
-      metadata:
-        description: ""
-        id: R5VDQngWVSvfJdVM_R6fk
-        name: Teste
-      nodes:
-        '[MOa482VoLr1jAvV3YcXVZ]:text "Text"':
-          data:
-            normalizeLineEndings: true
-            text: C:\projetos\Enter_Challenge\dividend_data.csv
-          outgoingConnections:
-            - output->"Read File" VAhr7zBpnZeIKWFO4Ibc_/path
-          visualData: -58.87751689672541/119.27832989889461/330/98//
-        '[OvtQvLBqAUCw6gl7OgXbj]:code "Code"':
-          data:
-            allowConsole: false
-            allowFetch: false
-            allowProcess: false
-            allowRequire: false
-            allowRivet: false
-            code: >-
-              const csv = inputs.input.value.trim();
-
-              const lines = csv.split('\n');
-
-
-              // Parse CSV header
-
-              const header = lines[0].split(',').map(h => h.trim());
-
-              const assetClassIdx = header.indexOf('Asset class');
-
-              const assetIdx = header.indexOf('Asset');
-
-              const currentPriceIdx = header.indexOf('Current price');
-
-              const lastMonthPriceIdx = header.indexOf('Last month price');
-
-
-              if (assetClassIdx === -1 || assetIdx === -1 || currentPriceIdx === -1 || lastMonthPriceIdx === -1) {
-                  return {
-                      output: {
-                          type: 'string',
-                          value: 'CSV inválido: colunas necessárias não encontradas.'
-                      }
-                  };
-              }
-
-
-              // Parse data rows
-
-              const data = lines.slice(1).map(line => {
-                  const cols = line.split(',').map(c => c.trim());
-                  return {
-                      assetClass: cols[assetClassIdx],
-                      asset: cols[assetIdx],
-                      currentPrice: parseFloat(cols[currentPriceIdx]),
-                      lastMonthPrice: parseFloat(cols[lastMonthPriceIdx])
-                  };
-              });
-
-
-              // Calculate returns per asset
-
-              const returns = data.map(({ assetClass, asset, currentPrice, lastMonthPrice }) => {
-                  const ret = lastMonthPrice === 0 ? 0 : ((currentPrice - lastMonthPrice) / lastMonthPrice) * 100;
-                  return { assetClass, asset, return: ret };
-              });
-
-
-              // Group by asset class and calculate average return
-
-              const grouped = {};
-
-              returns.forEach(({ assetClass, return: ret }) => {
-                  if (!grouped[assetClass]) grouped[assetClass] = [];
-                  grouped[assetClass].push(ret);
-              });
-
-
-              const avgByClass = {};
-
-              for (const cls in grouped) {
-                  const arr = grouped[cls];
-                  const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
-                  avgByClass[cls] = avg;
-              }
-
-
-              // Calculate overall average return
-
-              const allReturns = returns.map(r => r.return);
-
-              const overallAvg = allReturns.reduce((a, b) => a + b, 0) / allReturns.length;
-
-
-              let summary = 'Resumo de Retornos por Classe de Ativo:\n';
-
-              for (const cls in avgByClass) {
-                  summary += `- ${cls}: ${avgByClass[cls].toFixed(2)}%\n`;
-              }
-
-
-              summary += '\nDetalhes por ativo:\n';
-
-              returns.forEach(({ asset, return: ret }) => {
-                  const sinal = ret >= 0 ? '+' : '';
-                  summary += `- ${asset}: ${sinal}${ret.toFixed(2)}%\n`;
-              });
-
-
-              summary += `\nRetorno médio geral: ${overallAvg.toFixed(2)}%\n`;
-
-
-              return {
-                  output: {
-                      type: 'string',
-                      value: summary
-                  }
-              };
-            inputNames:
-              - input
-            outputNames:
-              - output
-          visualData: 809.6301857417712/332.3341257024008/230/54//
-        '[VAhr7zBpnZeIKWFO4Ibc_]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          visualData: 485.8785523750748/-57.52240390719737/280/99//
-        '[dZHF5o-7vYv96Y8X8Iaz5]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          outgoingConnections:
-            - content->"Code" roVGbd6Zw4-YDnBgHgb5n/portfolio_text
-          visualData: 379.4474642786409/679.7372067577994/280/66//
-        '[e2i4Lgl5K-6O9Ap4ouMmC]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          outgoingConnections:
-            - content->"Code" OvtQvLBqAUCw6gl7OgXbj/input
-          visualData: 429.658065837429/381.1876839758163/280/57//
-        '[fcYe6dOtbTn1rb0EKBUlP]:text "Text"':
-          data:
-            text: C:\projetos\Enter_Challenge\XP - Albert_s portfolio.txt
-          outgoingConnections:
-            - output->"Read File" dZHF5o-7vYv96Y8X8Iaz5/path
-          visualData: -84.66133931880577/663.4526873333276/330/76//
-        '[qxVNh21TGxxFigxPKurGR]:code "Code"':
-          data:
-            allowConsole: false
-            allowFetch: false
-            allowProcess: false
-            allowRequire: false
-            allowRivet: false
-            code: >-
-              const tickers = [
-                "LREN3.SA", "GGBR4.SA", "ARZZ3.SA", "ABEV3.SA", 
-                "PETR4.SA", "VALE3.SA", "ITUB4.SA", "MRFG3.SA", 
-                "WEGE3.SA", "B3SA3.SA", "BBAS3.SA", "HAPV3.SA"
-              ];
-
-
-              const tickerStr = tickers.join(",");
-
-
-              const response = await fetch(
-                `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${tickerStr}`
-              );
-
-              const data = await response.json();
-
-
-              return {
-                output1: {
-                  type: "string",
-                  value: JSON.stringify(data)
-                }
-              };
-            inputNames: input1
-            outputNames: output1
-          visualData: 1208.6009116413304/55.497295486380025/230/97//
-        '[roVGbd6Zw4-YDnBgHgb5n]:code "Code"':
-          data:
-            allowConsole: false
-            allowFetch: false
-            allowProcess: false
-            allowRequire: false
-            allowRivet: false
-            code: |-
-              const text = inputs.portfolio_text.value;
-              const firstLine = text.split('\n')[0];
-              const clientName = firstLine.split(',')[0].trim();
-
-              return {
-                  client_name: {
-                      type: "string",
-                      value: clientName
-                  }
-              };
-            inputNames:
-              - portfolio_text
-            outputNames:
-              - client_name
-          visualData: 797.4167961734174/774.730236733885/443.05579580350616/91//
-        '[uqMt1wxcqvO30OVXDTk6y]:text "Text"':
-          data:
-            normalizeLineEndings: true
-            text: C:\projetos\Enter_Challenge\profitability_calc_wip.csv
-          outgoingConnections:
-            - output->"Read File" e2i4Lgl5K-6O9Ap4ouMmC/path
-          visualData: 6.8995604312507055/393.35425527580685/330/56//
     YvuUKw6GH7rKzoZvTtSTC:
       metadata:
         description: ""
         id: YvuUKw6GH7rKzoZvTtSTC
         name: main_challenge
       nodes:
-        '[2k7dTeu4ZMfcQsF31m6Cj]:prompt "Prompt"':
+        '[2k7dTeu4ZMfcQsF31m6Cj]:prompt "Prompt - Portfolio"':
           data:
             enableFunctionCall: false
-            promptText: "## Prompt: Summarize the Client’s Portfolio Results\r
+            promptText: "## Prompt: Summarize the Client's Portfolio Results\r
 
               \r
 
@@ -242,25 +22,88 @@ data:
 
               You are a financial analyst creating a monthly
               investment report for a middle-market client. Below, you will
-              receive detailed portfolio performance data, including asset
-              allocation, returns (monthly, YTD, vs. benchmark), and any notable
-              movements or rebalancing actions.\r
+              receive detailed portfolio performance data including asset
+              allocation and returns.\r
 
               \r
 
               Your task is to write a concise, client-facing
-              summary (1–2 paragraphs max) of the portfolio’s performance,
+              summary (1-2 paragraphs max) of the portfolio's performance,
               highlighting what matters most from an analytical and strategic
               point of view.\r
 
               \r
 
-              ### What to include:\r
+              ### What to include (treat each as a SEPARATE
+              category):\r
 
-              - Overall portfolio return\r
+              \r
 
-              - Performance of key asset classes (e.g., equities,
-              fixed income, alternatives)\r
+              FUNDOS DE INVESTIMENTO:\r
+
+              - Summarize each fund's return using only figures
+              from the data\r
+
+              - State the fund name and its return percentage\r
+
+              - Do NOT group funds together with fixed income\r
+
+              \r
+
+              RENDA FIXA:\r
+
+              - Fixed income means CDB, LCI, LCA, Tesouro Direto\r
+
+              - Report ONLY the contracted rate (e.g. IPCA+5.45%),
+              NEVER a \r
+
+              \  percentage gain for fixed income products\r
+
+              - Fixed income and investment funds are DIFFERENT
+              categories\r
+
+              \r
+
+              ACOES:\r
+
+              - Highlight the best and worst performing stocks
+              this month\r
+
+              - Use only the return figures present in the data\r
+
+              \r
+
+              PATRIMONIO TOTAL:\r
+
+              - Always extract and report the total portfolio
+              value \r
+
+              \  (first monetary value in the portfolio data, e.g.
+              R$***,***.**)\r
+
+              - Mention it at the beginning when presenting the
+              portfolio \r
+
+              \  overview (e.g., \"Total portfolio value: R$X\")\r
+
+              - Mention it again at the end as context for the
+              overall \r
+
+              \  financial position of the client\r
+
+              \r
+
+              \r
+
+              ### Rules:\r
+
+              - Do NOT invent any return figure or benchmark
+              comparison\r
+
+              - Do NOT group fundos de investimento with renda
+              fixa\r
+
+              - Use only data explicitly provided in the input\r
 
               \r
 
@@ -271,197 +114,22 @@ data:
               - Avoid overly technical language — prioritize
               clarity\r
 
-              \r
+              - Write in English (this summary will be used as
+              input to \r
 
-              ### Example Output:\r
-
-              \r
-
-              > The portfolio posted a 1.2% return in May,
-              outperforming its benchmark by 0.4 percentage points. Equities
-              were the primary driver of performance, with U.S. and European
-              stocks benefiting from improved investor sentiment and solid
-              earnings reports. On the other hand, Brazilian fixed income had a
-              marginal negative contribution due to the flattening yield curve.
-              No significant reallocations were made during the period, as we
-              remain comfortable with the current positioning, particularly in
-              global equities and inflation-linked bonds.\r
-
-              \r
-
-              ---\r
+              \  another prompt)\r
 
               \r
 
               ### Input:\r
 
-              Below is the portfolio data and performance
-              commentary:\r
-
-              \r
-
               {{portfolio_results}}\r\n"
             type: user
             useTypeInput: false
           outgoingConnections:
-            - output->"Chat" uFA01_NatqcaHILBb9Oip/prompt
+            - output->"Chat - Portfolio" uFA01_NatqcaHILBb9Oip/prompt
           visualData: 875.8218156557556/229.2741519647472/280/20//
-        '[31dzJaNxpU3PD0c2_Wr0Z]:code "Code"':
-          data:
-            allowConsole: false
-            allowFetch: false
-            allowProcess: false
-            allowRequire: false
-            allowRivet: false
-            code: >-
-              const csv = inputs.input.value.trim();
-
-              const lines = csv.split('\n');
-
-
-              // Parse CSV header
-
-              const header = lines[0].split(',').map(h => h.trim());
-
-              const assetClassIdx = header.indexOf('Asset class');
-
-              const assetIdx = header.indexOf('Asset');
-
-              const currentPriceIdx = header.indexOf('Current price');
-
-              const lastMonthPriceIdx = header.indexOf('Last month price');
-
-
-              if (assetClassIdx === -1 || assetIdx === -1 || currentPriceIdx === -1 || lastMonthPriceIdx === -1) {
-                  return {
-                      output: {
-                          type: 'string',
-                          value: 'CSV inválido: colunas necessárias não encontradas.'
-                      }
-                  };
-              }
-
-
-              // Parse data rows
-
-              const data = lines.slice(1).map(line => {
-                  const cols = line.split(',').map(c => c.trim());
-                  return {
-                      assetClass: cols[assetClassIdx],
-                      asset: cols[assetIdx],
-                      currentPrice: parseFloat(cols[currentPriceIdx]),
-                      lastMonthPrice: parseFloat(cols[lastMonthPriceIdx])
-                  };
-              });
-
-
-              // Calculate returns per asset
-
-              const returns = data.map(({ assetClass, asset, currentPrice, lastMonthPrice }) => {
-                  const ret = lastMonthPrice === 0 ? 0 : ((currentPrice - lastMonthPrice) / lastMonthPrice) * 100;
-                  return { assetClass, asset, return: ret };
-              });
-
-
-              // Group by asset class and calculate average return
-
-              const grouped = {};
-
-              returns.forEach(({ assetClass, return: ret }) => {
-                  if (!grouped[assetClass]) grouped[assetClass] = [];
-                  grouped[assetClass].push(ret);
-              });
-
-
-              const avgByClass = {};
-
-              for (const cls in grouped) {
-                  const arr = grouped[cls];
-                  const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
-                  avgByClass[cls] = avg;
-              }
-
-
-              // Calculate overall average return
-
-              const allReturns = returns.map(r => r.return);
-
-              const overallAvg = allReturns.reduce((a, b) => a + b, 0) / allReturns.length;
-
-
-              let summary = 'Resumo de Retornos por Classe de Ativo:\n';
-
-              for (const cls in avgByClass) {
-                  summary += `- ${cls}: ${avgByClass[cls].toFixed(2)}%\n`;
-              }
-
-
-              summary += '\nDetalhes por ativo:\n';
-
-              returns.forEach(({ asset, return: ret }) => {
-                  const sinal = ret >= 0 ? '+' : '';
-                  summary += `- ${asset}: ${sinal}${ret.toFixed(2)}%\n`;
-              });
-
-
-              summary += `\nRetorno médio geral: ${overallAvg.toFixed(2)}%\n`;
-
-
-              return {
-                  output: {
-                      type: 'string',
-                      value: summary
-                  }
-              };
-            inputNames:
-              - input
-            outputNames:
-              - output
-          outgoingConnections:
-            - output->"Prompt" VUyGoJpSkRmx4BKOTWVW-/portfolio_returns
-          visualData: 822.8956798285155/-195.04656551303813/230/69//
-        '[3e3_fHJXBrmSgQp2Zpv-Q]:chat "Chat"':
-          data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: false
-            maxTokens: 1024
-            model: gpt-4o-mini
-            parallelFunctionCalling: true
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useAdditionalParametersInput: false
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - response->"Prompt" a5rVOdSyH-BJBRqXT_S8j/risk_profile
-          visualData: 1300.7064682936445/846.3526676584802/230/16//
-        '[4RF6SLiwVyeDjYlJCqs42]:text "Text"':
-          data:
-            normalizeLineEndings: true
-            text: C:\projetos\Enter_Challenge\dividend_data.csv
-          outgoingConnections:
-            - output->"Read File" Ohbp8TU1EGcR9hWHj3ll1/path
-          visualData: -288.1422827703222/-335.69782260854913/330/105//
-        '[5xDoBcWJa6cKYipoybJ3L]:text "Text"':
-          data:
-            normalizeLineEndings: true
-            text: C:\projetos\Enter_Challenge\profitability_calc_wip.csv
-          outgoingConnections:
-            - output->"Read File" e7D58nR8VkHXk6Zf7Za66/path
-          visualData: -181.70123093090422/83.74501027515387/330/103//
-        '[7vrg95To4eQ1_DGJeYmQY]:chat "Chat"':
+        '[3e3_fHJXBrmSgQp2Zpv-Q]:chat "Chat - Risk Profile"':
           data:
             additionalParameters: []
             cache: false
@@ -487,128 +155,95 @@ data:
             useUseTopPInput: false
             useUserInput: false
           outgoingConnections:
-            - response->"Graph Output" l24qaQcIynf_Q5VIPpRO6/value
-          visualData: 2857.6139411946033/965.7881057210424/230/111//
-        '[Dp3hXAnTAMj8UtoK3vpfo]:code "Code"':
+            - response->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/risk_profile
+          visualData: 1300.7064682936445/846.3526676584802/230/153//
+        '[5xDoBcWJa6cKYipoybJ3L]:text "Text"':
           data:
-            allowConsole: false
-            allowFetch: false
-            allowProcess: false
-            allowRequire: false
-            allowRivet: false
-            code: >-
-              const csv = inputs.input1.value.trim();
-
-              const lines = csv.split('\n').filter(l => l.trim());
-
-
-              const header = lines[0].split(',').map(h => h.trim());
-
-              const tickerIdx = header.indexOf('ticker');
-
-              const dyIdx = header.indexOf('dy_percent');
-
-              const classIdx = header.indexOf('classification');
-
-              const inPortfolioIdx = header.indexOf('in_portfolio');
-
-
-              if (tickerIdx === -1 || dyIdx === -1) {
-                  return {
-                      output1: {
-                          type: 'string',
-                          value: 'CSV inválido: colunas necessárias não encontradas.'
-                      }
-                  };
-              }
-
-
-              const data = lines.slice(1).map(line => {
-                  const cols = line.split(',').map(c => c.trim());
-                  return {
-                      ticker: cols[tickerIdx],
-                      dy: parseFloat(cols[dyIdx]),
-                      classification: cols[classIdx],
-                      inPortfolio: cols[inPortfolioIdx] === 'yes'
-                  };
-              });
-
-
-              const portfolioAssets = data.filter(d => d.inPortfolio);
-
-              const candidates = data.filter(d => !d.inPortfolio);
-
-
-              let summary = 'Dividend Yield Analysis (Source: Status Invest, Feb 2025):\n\n';
-
-
-              summary += '=== ASSETS IN PORTFOLIO ===\n';
-
-              portfolioAssets.forEach(({ ticker, dy, classification }) => {
-                  const flag = classification === 'regular' ? '✅' : 
-                               classification === 'irregular' ? '⚠️' : '❌';
-                  summary += `- ${ticker}: DY ${dy.toFixed(2)}% ${flag} (${classification})\n`;
-              });
-
-
-              summary += '\n=== BUY CANDIDATES (not in portfolio) ===\n';
-
-              candidates
-                  .sort((a, b) => b.dy - a.dy)
-                  .forEach(({ ticker, dy, classification }) => {
-                      const flag = classification === 'regular' ? '✅' : 
-                                   classification === 'irregular' ? '⚠️' : '❌';
-                      summary += `- ${ticker}: DY ${dy.toFixed(2)}% ${flag} (${classification})\n`;
-                  });
-
-              return {
-                  output1: {
-                      type: 'string',
-                      value: summary
-                  }
-              };
-            inputNames: input1
-            outputNames: output1
+            normalizeLineEndings: true
+            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\profitability_calc.csv
           outgoingConnections:
-            - output1->"Prompt" VUyGoJpSkRmx4BKOTWVW-/dividend_data
-          visualData: 718.7527549049365/-626.770263906536/230/109//
+            - output->"Read File" e7D58nR8VkHXk6Zf7Za66/path
+          visualData: -181.70123093090422/83.74501027515387/330/103//
+        '[7vrg95To4eQ1_DGJeYmQY]:chat "Chat - Final"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            headers: []
+            maxTokens: 1024
+            model: gpt-4o-mini
+            parallelFunctionCalling: true
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - 'response->"OUTPUT: Investment Letter" l24qaQcIynf_Q5VIPpRO6/value'
+          visualData: 2857.6139411946033/965.7881057210424/230/159//
+        '[9DhMqPCn_OGAaERX-ENyz]:graphInput "Risk Profile Input"':
+          data:
+            dataType: string
+            id: risk_profile_text
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Prompt - Risk Profile" UjhTOc5lvzu3q8GmXFE4m/risk_profile
+          visualData: 418.1096140126979/698.1345664127792/330/142//
+        '[HH7ZIWuZK6hFaB045d1aX]:text "Text"':
+          data:
+            normalizeLineEndings: true
+            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\dividend_data.csv
+          outgoingConnections:
+            - output->"Read File" uJs2S0v7K1up45c4ZQto1/path
+          visualData: -357.1146732416375/-876.2433292119678/330/148//
         '[IRmu11M52SqjpMUwMzkU3]:readFile "Read File"':
           data:
             asBinary: false
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          outgoingConnections:
-            - content->"Prompt" UjhTOc5lvzu3q8GmXFE4m/risk_profile
           visualData: 461.8280030057738/950.0322377050547/280/13//
         '[IWXX4pkv-TESkjtTRysc8]:text "Text"':
           data:
-            text: C:\projetos\Enter_Challenge\XP - Albert_s risk profile.txt
+            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\risk_profile.txt
           outgoingConnections:
             - output->"Read File" IRmu11M52SqjpMUwMzkU3/path
           visualData: 12.255395731810163/952.5953499889117/330/13//
         '[JQcM76mHxEdGnPnpnh1Kg]:text "Text"':
           data:
-            text: C:\projetos\Enter_Challenge\XP - Albert_s portfolio.txt
+            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\portfolio.txt
           outgoingConnections:
             - output->"Read File" ecEklxZpVnZv4d8lLa1g4/path
           visualData: -120.56059524568231/428.13623360673046/330/75//
         '[MqSgBX7j9HDqr07FZ0NFh]:text "Text"':
           data:
-            text: C:\projetos\Enter_Challenge\XP - Macro analysis.txt
+            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\macro_analysis.txt
           outgoingConnections:
             - output->"Read File" eAziWdaCvhUPtrmsowquf/path
-          visualData: -37.847715681789516/1777.3651239857488/330/86//
-        '[Ohbp8TU1EGcR9hWHj3ll1]:readFile "Read File"':
+          visualData: -43.80181005170919/1398.287782434196/330/118//
+        '[Tf-lQwMp_N3aFBdj2AXtu]:graphInput "Portfolio Input"':
           data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
+            dataType: string
+            id: portfolio_text
+            useDefaultValueInput: false
           outgoingConnections:
-            - content->"Code" Dp3hXAnTAMj8UtoK3vpfo/input1
-          visualData: 291.8465076678889/-314.1369010309205/280/106//
-        '[UjhTOc5lvzu3q8GmXFE4m]:prompt "Prompt"':
+            - data->"Equity Signal Analyzer" kkjlZzQ4r3VIsWkmyRHib/portfolio_text
+            - data->"Extract Advisor Name " qM3DZOKkhCayMIIsDW3lP/portfolio_text
+            - data->"Extract Client Name" h4m7Kv9TKsqr94JEH3c9J/portfolio_text
+            - data->"Prompt - Portfolio" 2k7dTeu4ZMfcQsF31m6Cj/portfolio_results
+          visualData: 279.4591629980687/270.50359671909143/330/141//
+        '[UjhTOc5lvzu3q8GmXFE4m]:prompt "Prompt - Risk Profile"':
           data:
             enableFunctionCall: false
             promptText: "## Prompt: Summarize the Client’s Risk Profile\r
@@ -686,96 +321,104 @@ data:
             type: user
             useTypeInput: false
           outgoingConnections:
-            - output->"Chat" 3e3_fHJXBrmSgQp2Zpv-Q/prompt
-          visualData: 870.2458321738997/673.499247206671/280/21//
-        '[VUyGoJpSkRmx4BKOTWVW-]:prompt "Prompt"':
+            - output->"Chat - Risk Profile" 3e3_fHJXBrmSgQp2Zpv-Q/prompt
+          visualData: 870.2458321738997/673.499247206671/280/152//
+        '[VUyGoJpSkRmx4BKOTWVW-]:prompt "Prompt - Buy/Sell"':
           data:
             enableFunctionCall: false
             promptText: "## Prompt: Analyze Portfolio and Generate Recommendations\r
 
               \r
 
+              **IMPORTANT: Respond only in English.**\r
+
+              \r
+
               ### Objective:\r
 
               You are a senior financial advisor at XP
-              Investimentos. \r
+              Investimentos.\r
 
-              Your task is to analyze a middle-market client
-              portfolio and \r
+              Below you will receive a pre-computed equity signal
+              table and the \r
 
-              generate specific, data-driven buy/sell
-              recommendations.\r
+              client's portfolio data. Use them exactly as
+              provided — do not \r
+
+              invent data, tickers, or percentages not present in
+              the inputs.\r
+
+              \r
+
+              ### Strict rules:\r
+
+              - NEVER add a ticker that is not in the
+              equity_signals input\r
+
+              - NEVER invent dividend yields or any figure not
+              provided\r
+
+              - Section 1 contains ONLY assets where SIGNAL does
+              NOT say \"BUY CANDIDATE\"\r
+
+              - Section 2 contains ONLY assets where SIGNAL says
+              \r
+
+              \  \"BUY CANDIDATE\" — pick up to 3\r
 
               \r
 
               ### Instructions:\r
 
-              - Cross-reference monthly returns with historical
-              returns since \r
+              - For Section 1: read the SIGNAL column and use it
+              as the ACTION.\r
 
-              purchase to identify underperforming assets\r
+              \  Write a 1-2 sentence justification using MONTHLY
+              and HISTORICAL \r
 
-              - Cross-reference each asset with its dividend yield
-              data to \r
+              \  columns. Mention DY% only if it meaningfully
+              changes the outlook.\r
 
-              assess alignment with the client profile\r
+              - For Section 2: pick up to 3 BUY CANDIDATE assets
+              from the input.\r
 
-              - Identify assets that should be sold, reduced,
-              held, or bought\r
+              \  Write a 1-2 sentence justification for each,
+              focused on price \r
 
-              - Suggest up to 3 buy candidates from the dividend
-              data that are \r
+              \  momentum. Briefly mention DY% if it is above 4%
+              and regular.\r
 
-              not currently in the portfolio\r
+              - For Section 3: write one paragraph on overall
+              positioning for \r
 
-              - Identify any upcoming liquidity events\r
-
-              \r
-
-              ### Recommendation logic:\r
-
-              - SELL: asset does not pay dividends AND has
-              significant \r
-
-              historical loss\r
-
-              - REDUCE: asset has poor dividend history AND
-              meaningful \r
-
-              historical loss but some recovery potential\r
-
-              - HOLD: asset pays regular dividends AND has stable
-              or \r
-
-              positive performance\r
-
-              - BUY: asset pays strong dividends AND is not in
-              portfolio AND \r
-
-              addresses allocation gaps\r
+              \  a moderate-risk client, based only on the data
+              provided.\r
 
               \r
 
               ### Output format:\r
 
-              Section 1 - Current portfolio assessment:\r
+              \r
 
-              ASSET | ACTION | JUSTIFICATION (1-2 sentences)\r
+              Section 1 - Current portfolio assessment (held
+              assets only):\r
+
+              ASSET | ACTION | JUSTIFICATION\r
 
               \r
 
-              Section 2 - Buy candidates (up to 3):\r
+              Section 2 - Buy candidates (up to 3, from the BUY
+              CANDIDATE \r
 
-              ASSET | DY | JUSTIFICATION (1-2 sentences)\r
+              assets in the input only):\r
+
+              ASSET | MONTHLY RETURN | JUSTIFICATION\r
 
               \r
 
               Section 3 - Portfolio observations:\r
 
-              One short paragraph covering allocation gaps,
-              upcoming liquidity \r
-
-              events, and overall positioning.\r
+              One short paragraph.\r
 
               \r
 
@@ -783,34 +426,33 @@ data:
 
               \r
 
-              ### Inputs:\r
+              ### Input 1 — Equity Signal Analysis:\r
+
+              {{equity_signals}}\r
 
               \r
 
-              #### 1. Monthly returns per asset:\r
-
-              {{portfolio_returns}}\r
-
-              \r
-
-              #### 2. Portfolio historical data (positions,
+              ### Input 2 — Portfolio historical data (positions,
               allocation, \r
 
               historical return since purchase):\r
 
-              {{portfolio_data}}\r
-
-              \r
-
-              #### 3. Dividend yield data for all 12 assets:\r
-
-              {{dividend_data}}"
+              {{portfolio_data}}\r\n"
             type: user
             useTypeInput: false
           outgoingConnections:
-            - output->"Chat" iylKQYT-nT6VAm7qjkNWy/prompt
-          visualData: 2196.1944589418545/115.07936240777349/280/95//
-        '[a5rVOdSyH-BJBRqXT_S8j]:prompt "Prompt"':
+            - output->"Chat - Buy/Sell" iylKQYT-nT6VAm7qjkNWy/prompt
+          visualData: 2196.1944589418545/115.07936240777349/280/154//
+        '[ZPjJVMXXStpDeQsH1pbQo]:graphInput "Profitability CSV Input"':
+          data:
+            dataType: string
+            id: profitability_csv
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Equity Signal Analyzer"
+              kkjlZzQ4r3VIsWkmyRHib/profitability_csv
+          visualData: 14.264245641596517/-175.05845397340414/330/140//
+        '[a5rVOdSyH-BJBRqXT_S8j]:prompt "Prompt - Final"':
           data:
             enableFunctionCall: false
             promptText: "## Prompt: Write the Monthly Investment Letter (in Portuguese)\r
@@ -837,15 +479,15 @@ data:
 
               ### Letter structure (follow this order):\r
 
-              1. Opening greeting\r
+              1. Opening greeting (no section title)\r
 
-              2. Macroeconomic context\r
+              2. Section: Contexto Macroeconomico\r
 
-              3. Portfolio performance\r
+              3. Section: Desempenho do Portfolio\r
 
-              4. Buy/Sell recommendations\r
+              4. Section: Recomendacoes\r
 
-              5. Closing\r
+              5. Closing (no section title)\r
 
               \r
 
@@ -896,17 +538,74 @@ data:
 
               \r
 
+              ### Accuracy Rules (CRITICAL):\r
+
+              - Fixed income (renda fixa) returns are contractual
+              rates like \r
+
+              \  IPCA+X% or CDI%. They are NEVER a percentage gain
+              like funds \r
+
+              \  or equities.\r
+
+              - Investment funds (fundos de investimento) and
+              fixed income \r
+
+              \  (renda fixa) are DIFFERENT asset classes with
+              DIFFERENT returns. \r
+
+              \  NEVER attribute a fund's return to fixed income
+              or vice versa.\r
+
+              - When writing about renda fixa performance,
+              reference only the \r
+
+              \  contracted rate (e.g., \"CDB a IPCA+5,45%\"), NOT
+              a percentage \r
+
+              \  gain figure.\r
+
+              \  \r
+
               ### Output format:\r
 
               - Language: Portuguese only\r
 
-              - Length: maximum 500 words\r
+              - Length: maximum 750 words\r
 
-              - Format: paragraphs only, no bullet points, no
-              markdown headers\r
+              - Each section (except greeting and closing) MUST
+              start with its \r
+
+              title on its own line, in ALL CAPS, like this:\r
+
+              \  CONTEXTO MACROECONOMICO\r
+
+              \  [paragraph]\r
+
+              \r
+
+              \  DESEMPENHO DO PORTFOLIO\r
+
+              \  [paragraph]\r
+
+              \r
+
+              \  RECOMENDACOES\r
+
+              \  [paragraph]\r
+
+              - No bullet points anywhere\r
 
               - Do not include any explanation outside the letter
               itself\r
+
+              - Close with exactly:\r
+
+              \  \"Atenciosamente,\r
+
+              \  {{advisor_name}}\r
+
+              \  Assessor de Investimentos | XP Investimentos\"\r
 
               \r
 
@@ -934,20 +633,26 @@ data:
 
               #### 4. Buy/Sell Recommendations:\r
 
-              {{recommendations}}"
+              {{recommendations}}\r\n"
             type: user
             useTypeInput: false
           outgoingConnections:
-            - output->"Chat" 7vrg95To4eQ1_DGJeYmQY/prompt
+            - output->"Chat - Final" 7vrg95To4eQ1_DGJeYmQY/prompt
           visualData: 2378.8949296402866/692.2009591683363/280/110//
+        '[aeTRzRSi0_9hv9z4jGyvs]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: dividend_csv
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Equity Signal Analyzer" kkjlZzQ4r3VIsWkmyRHib/dividend_csv
+          visualData: 104.47518835470052/-655.38292193053/330/126//
         '[e7D58nR8VkHXk6Zf7Za66]:readFile "Read File"':
           data:
             asBinary: false
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          outgoingConnections:
-            - content->"Code" 31dzJaNxpU3PD0c2_Wr0Z/input
           visualData: 305.82685878983494/58.568186671485776/280/104//
         '[eAziWdaCvhUPtrmsowquf]:readFile "Read File"':
           data:
@@ -955,20 +660,23 @@ data:
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          outgoingConnections:
-            - content->"Prompt" wyJ8JbqwMIhV21LWPMfrU/macroeconomic_report
-          visualData: 496.44377145664/1755.9755939542329/280/87//
+          visualData: 460.7192052371219/1400.7146298823588/280/119//
         '[ecEklxZpVnZv4d8lLa1g4]:readFile "Read File"':
           data:
             asBinary: false
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          outgoingConnections:
-            - content->"Code" h4m7Kv9TKsqr94JEH3c9J/portfolio_text
-            - content->"Prompt" 2k7dTeu4ZMfcQsF31m6Cj/portfolio_results
           visualData: 335.40266171044584/455.92870731315475/280/65//
-        '[h4m7Kv9TKsqr94JEH3c9J]:code "Code"':
+        '[g1ilqHJbiNO9cCQpSQYnV]:graphInput "Macro Analysis Input"':
+          data:
+            dataType: string
+            id: macro_text
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Prompt - Macro" wyJ8JbqwMIhV21LWPMfrU/macroeconomic_report
+          visualData: 432.1036815637474/1157.4676745713841/330/143//
+        '[h4m7Kv9TKsqr94JEH3c9J]:code "Extract Client Name"':
           data:
             allowConsole: false
             allowFetch: false
@@ -991,13 +699,14 @@ data:
             outputNames:
               - client_name
           outgoingConnections:
-            - client_name->"Prompt" a5rVOdSyH-BJBRqXT_S8j/client_name
-          visualData: 1383.1806104841648/-26.838255068486006/443.05579580350616/85//
-        '[hkIVtZzf81r-fxSF15I_X]:chat "Chat"':
+            - client_name->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/client_name
+          visualData: 1383.1806104841648/-26.838255068486006/443.05579580350616/144//
+        '[hkIVtZzf81r-fxSF15I_X]:chat "Chat - Macro"':
           data:
             additionalParameters: []
             cache: false
             enableFunctionUse: false
+            headers: []
             maxTokens: 1024
             model: gpt-4o-mini
             parallelFunctionCalling: true
@@ -1018,13 +727,14 @@ data:
             useUseTopPInput: false
             useUserInput: false
           outgoingConnections:
-            - response->"Prompt" a5rVOdSyH-BJBRqXT_S8j/macro_outlook
-          visualData: 1399.422293482364/1649.6320136927793/230/89//
-        '[iylKQYT-nT6VAm7qjkNWy]:chat "Chat"':
+            - response->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/macro_outlook
+          visualData: 1359.728331016233/1363.8354839366348/230/157//
+        '[iylKQYT-nT6VAm7qjkNWy]:chat "Chat - Buy/Sell"':
           data:
             additionalParameters: []
             cache: false
             enableFunctionUse: false
+            headers: []
             maxTokens: 1024
             modalitiesIncludeAudio: false
             modalitiesIncludeText: false
@@ -1052,18 +762,226 @@ data:
             useUseTopPInput: false
             useUserInput: false
           outgoingConnections:
-            - response->"Prompt" a5rVOdSyH-BJBRqXT_S8j/recommendations
-          visualData: 2635.304326535813/388.9604935511187/230/96//
-        '[l24qaQcIynf_Q5VIPpRO6]:graphOutput "Graph Output"':
+            - response->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/recommendations
+          visualData: 2635.304326535813/388.9604935511187/230/155//
+        '[kkjlZzQ4r3VIsWkmyRHib]:code "Equity Signal Analyzer"':
+          data:
+            allowConsole: false
+            allowFetch: false
+            allowProcess: false
+            allowRequire: false
+            allowRivet: false
+            code: >
+              // ============================================================
+
+              // EQUITY ANALYZER
+
+              // Input 1: profitability_csv | Input 2: portfolio_text | Input 3: dividend_csv
+
+              // Output 1: portfolio_results → Prompt 1
+
+              // Output 2: equity_signals   → Prompt 4
+
+              // ============================================================
+
+
+              // ---- PART 1: Monthly returns from CSV ----
+
+              const csv = inputs.profitability_csv.value.trim();
+
+              const lines = csv.split('\n');
+
+              const header = lines[0].split(',').map(h => h.trim());
+
+              const assetIdx = header.indexOf('Asset');
+
+              const currentPriceIdx = header.indexOf('Current price');
+
+              const lastMonthPriceIdx = header.indexOf('Last month price');
+
+              const assetClassIdx = header.indexOf('Asset class');
+
+
+              const returns = lines.slice(1).map(line => {
+                const cols = line.split(',').map(c => c.trim());
+                const cur = parseFloat(cols[currentPriceIdx]);
+                const prev = parseFloat(cols[lastMonthPriceIdx]);
+                return {
+                  assetClass: cols[assetClassIdx],
+                  asset: cols[assetIdx],
+                  return: prev === 0 ? 0 : ((cur - prev) / prev) * 100
+                };
+              });
+
+
+              // Average by class
+
+              const grouped = {};
+
+              returns.forEach(({ assetClass, return: ret }) => {
+                if (!grouped[assetClass]) grouped[assetClass] = [];
+                grouped[assetClass].push(ret);
+              });
+
+              const overallAvg = returns.map(r => r.return).reduce((a, b) => a + b, 0) / returns.length;
+
+
+              let portfolioResults = 'Monthly Return Summary by Asset Class:\n';
+
+              for (const cls in grouped) {
+                const avg = grouped[cls].reduce((a, b) => a + b, 0) / grouped[cls].length;
+                portfolioResults += `- ${cls}: ${avg.toFixed(2)}%\n`;
+              }
+
+              portfolioResults += '\nDetails per asset:\n';
+
+              returns.forEach(({ asset, return: ret }) => {
+                portfolioResults += `- ${asset}: ${ret >= 0 ? '+' : ''}${ret.toFixed(2)}%\n`;
+              });
+
+              portfolioResults += `\nOverall average return: ${overallAvg.toFixed(2)}%\n`;
+
+
+              // ---- PART 2: Historical returns from portfolio_text ----
+
+              const knownTickers = ['LREN3','MRFG3','ARZZ3','HAPV3'];
+
+              const pLines = inputs.portfolio_text.value.split('\n').map(l => l.trim()).filter(l => l);
+
+              const historical = {};
+
+
+              for (let i = 0; i < pLines.length; i++) {
+                if (knownTickers.includes(pLines[i])) {
+                  const histLine = pLines[i + 3] || '';
+                  const match = histLine.match(/^(-?\d+[,.]?\d*)%$/);
+                  if (match) historical[pLines[i]] = parseFloat(match[1].replace(',', '.'));
+                }
+              }
+
+
+              // ---- PART 3: Dividend data ----
+
+              const divMap = {};
+
+              const divLines = inputs.dividend_csv.value.trim().split('\n');
+
+              const divHeader = divLines[0].split(',').map(h => h.trim());
+
+              const tickerIdx  = divHeader.indexOf('ticker');
+
+              const dyIdx      = divHeader.indexOf('dy_percent');
+
+              const classIdx   = divHeader.indexOf('classification');
+
+
+              divLines.slice(1).forEach(line => {
+                if (!line.trim()) return;
+                const cols = line.split(',').map(c => c.trim());
+                divMap[cols[tickerIdx]] = {
+                  dy: parseFloat(cols[dyIdx]) || 0,
+                  classification: cols[classIdx] || 'unknown'
+                };
+              });
+
+
+              // ---- PART 4: Signal logic ----
+
+              function getSignal(hist, month) {
+                if (hist < -50 && month > 30)          return 'HOLD — volatile recovery from crash, reassess next month';
+                if (hist < -30 && month < 0)           return 'SELL — deep loss accelerating, no recovery signal';
+                if (hist < -15 && month < 0)           return 'SELL — position deteriorating, consider cutting losses';
+                if (hist < -30 && Math.abs(month) < 2) return 'SELL — deep loss with no meaningful recovery signal';
+                if (hist < 0   && month > 10)          return 'HOLD — recovering from loss, monitor closely';
+                if (hist < -30 && month > 0)           return 'HOLD — deep loss, slow recovery, watch sustainability';
+                if (hist > 0   && month < -15)         return 'REDUCE — profit at risk, protect gains';
+                if (hist > 0   && month < 0)           return 'HOLD — profitable, normal volatility';
+                if (hist > 0   && month > 0)           return 'HOLD — strong position, consider adding on dips';
+                return 'HOLD — monitor position';
+              }
+
+
+              // ---- PART 5: Build equity_signals ----
+
+              let equitySignals = 'Equity Signal Analysis (Historical x Monthly x Dividend):\n\n';
+
+              equitySignals += 'ASSET | MONTHLY | HISTORICAL | SIGNAL | DY% | DIVIDEND\n';
+
+              equitySignals += '------|---------|------------|--------|-----|----------\n';
+
+
+              returns.forEach(({ asset, return: month }) => {
+                const hist   = historical[asset];
+                const div    = divMap[asset];
+                const histLabel  = hist !== undefined ? (hist >= 0 ? '+' : '') + hist.toFixed(1) + '%' : 'N/A';
+                const monthLabel = (month >= 0 ? '+' : '') + month.toFixed(2) + '%';
+                const signal     = hist !== undefined ? getSignal(hist, month) : 'BUY CANDIDATE — not currently held in portfolio';
+                const dyLabel    = div ? (div.dy > 0 ? div.dy.toFixed(2) + '%' : '0%') : 'N/A';
+                const divClass   = div ? div.classification : 'N/A';
+                equitySignals += `${asset} | ${monthLabel} | ${histLabel} | ${signal} | ${dyLabel} | ${divClass}\n`;
+              });
+
+
+              return {
+                equity_signals: { type: 'string', value: equitySignals }
+              };
+            inputNames:
+              - portfolio_text
+              - profitability_csv
+              - dividend_csv
+            outputNames:
+              - equity_signals
+          outgoingConnections:
+            - equity_signals->"Prompt - Buy/Sell"
+              VUyGoJpSkRmx4BKOTWVW-/equity_signals
+          visualData: 1231.6525313494224/-1000.137818677668/491.6254355818951/145//
+        '[l24qaQcIynf_Q5VIPpRO6]:graphOutput "OUTPUT: Investment Letter"':
           data:
             dataType: string
             id: output
-          visualData: 3302.8580137824338/985.5585986269944/330/null//
-        '[uFA01_NatqcaHILBb9Oip]:chat "Chat"':
+          visualData: 3302.8580137824338/985.5585986269944/330/158//
+        '[qM3DZOKkhCayMIIsDW3lP]:code "Extract Advisor Name "':
+          data:
+            allowConsole: false
+            allowFetch: false
+            allowProcess: false
+            allowRequire: false
+            allowRivet: false
+            code: >
+              const text = inputs.portfolio_text.value;
+
+
+              const parts = text.split('Nome do assessor');
+
+              let advisorName = "Assessor XP Investimentos";
+
+              if (parts.length > 1) {
+                const lines = parts[1].split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                if (lines.length > 0) advisorName = lines[0];
+              }
+
+
+              return {
+                advisor_name: {
+                  type: "string",
+                  value: advisorName,
+                },
+              };
+            inputNames:
+              - portfolio_text
+            outputNames:
+              - advisor_name
+            promptText: ""
+          isConditional: false
+          outgoingConnections:
+            - advisor_name->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/advisor_name
+          visualData: 1428.1169950315282/-505.8819267322721/443.05579580350616/163//
+        '[uFA01_NatqcaHILBb9Oip]:chat "Chat - Portfolio"':
           data:
             additionalParameters: []
             cache: false
             enableFunctionUse: false
+            headers: []
             maxTokens: 1024
             model: gpt-4o-mini
             parallelFunctionCalling: true
@@ -1084,10 +1002,17 @@ data:
             useUseTopPInput: false
             useUserInput: false
           outgoingConnections:
-            - response->"Prompt" VUyGoJpSkRmx4BKOTWVW-/portfolio_data
-            - response->"Prompt" a5rVOdSyH-BJBRqXT_S8j/portfolio_results
-          visualData: 1310.7431160433127/361.980981417884/230/9//
-        '[wyJ8JbqwMIhV21LWPMfrU]:prompt "Prompt"':
+            - response->"Prompt - Buy/Sell" VUyGoJpSkRmx4BKOTWVW-/portfolio_data
+            - response->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/portfolio_results
+          visualData: 1310.7431160433127/361.980981417884/230/151//
+        '[uJs2S0v7K1up45c4ZQto1]:readFile "Read File"':
+          data:
+            asBinary: false
+            errorOnMissingFile: false
+            path: ""
+            usePathInput: true
+          visualData: 159.43039307688971/-900.8878829543871/280/149//
+        '[wyJ8JbqwMIhV21LWPMfrU]:prompt "Prompt - Macro"':
           data:
             enableFunctionCall: false
             promptText: "## Prompt: Summarize the Macroeconomic Outlook\r
@@ -1169,8 +1094,8 @@ data:
             type: user
             useTypeInput: false
           outgoingConnections:
-            - output->"Chat" hkIVtZzf81r-fxSF15I_X/prompt
-          visualData: 890.3104371220934/1723.146451467982/280/91//
+            - output->"Chat - Macro" hkIVtZzf81r-fxSF15I_X/prompt
+          visualData: 908.1727202318524/1292.4669587104586/280/156//
   metadata:
     description: ""
     id: kjLT_7qKu1l3CMXmUjSix

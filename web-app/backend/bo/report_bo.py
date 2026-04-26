@@ -14,6 +14,7 @@ from vo.report_vo import ReportResultVO
 
 RIVET_RUNNER_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "rivet-runner")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "output")
+HEADER_IMG = os.path.join(os.path.dirname(__file__), "..", "..", "public", "xp_header.png")
 
 
 class ReportBO:
@@ -30,6 +31,8 @@ class ReportBO:
             print(f"[BO] Generating report for: {client.name}")
 
             files = self.client_dao.get_client_files(client_id)
+            files["advisor_name"] = client.advisor_name
+            files["client_name"] = client.name
             print(f"[DAO] Files loaded for {client_id}: {list(files.keys())}")
 
             print(f"[Rivet] Running graph for {client.name}...")
@@ -115,44 +118,55 @@ class ReportBO:
 
     def _export_pdf(self, letter_text: str, client: ClientVO) -> str:
         os.makedirs(OUTPUT_DIR, exist_ok=True)
+        print(f"[PDF] Letter tail: {letter_text[-300:]!r}")
 
         advisor_name = self._safe(client.advisor_name)
         client_email = self._safe(client.email)
 
         class XPReport(FPDF):
             def header(self):
-                self.set_font("Helvetica", "I", 9)
-                self.set_text_color(140, 140, 140)
-                self.cell(0, 8, "XP Investimentos | Relatorio Mensal de Investimentos", align="C")
-                self.ln(3)
+                img = os.path.abspath(HEADER_IMG)
+                if os.path.isfile(img):
+                    self.image(img, x=0, y=0, w=210)
+                    self.ln(18)
+                else:
+                    self.set_font("Helvetica", "I", 9)
+                    self.set_text_color(140, 140, 140)
+                    try:
+                        self.multi_cell(0, 8, "XP Investimentos | Relatorio Mensal de Investimentos", align="C")
+                    except Exception as e:
+                        print(f"[PDF] Header render error: {e}")
+                    self.ln(3)
 
             def footer(self):
                 self.set_y(-14)
+                self.set_x(self.l_margin)
                 self.set_font("Helvetica", "I", 9)
                 self.set_text_color(140, 140, 140)
-                self.cell(
-                    0, 10,
-                    f"Assessor: {advisor_name}  |  {client_email}  |  XP Investimentos - Confidencial",
-                    align="C",
-                )
+                try:
+                    self.multi_cell(
+                        0, 10,
+                        f"Assessor: {advisor_name}  |  {client_email}  |  XP Investimentos - Confidencial",
+                        align="C",
+                    )
+                except Exception as e:
+                    print(f"[PDF] Footer render error: {e}")
 
         pdf = XPReport(orientation="P", unit="mm", format="A4")
-        pdf.set_margins(25, 22, 25)
+        pdf.set_margins(25, 14, 25)
         pdf.set_auto_page_break(auto=True, margin=18)
         pdf.add_page()
 
         # Title
         pdf.set_font("Helvetica", "B", 16)
-        pdf.set_text_color(16, 63, 108)
-        pdf.cell(0, 10, self._safe(f"Relatorio Mensal - {client.name}"), align="C")
-        pdf.ln(7)
+        pdf.set_text_color(0, 0, 0)
+        try:
+            pdf.multi_cell(0, 10, self._safe(f"Relatorio Mensal - {client.name}"), align="C")
+        except Exception as e:
+            print(f"[PDF] Title render error: {e}")
+        pdf.ln(5)
 
-        # Date
-        date_str = datetime.now().strftime("%B de %Y")
-        pdf.set_font("Helvetica", "", 10)
-        pdf.set_text_color(110, 110, 110)
-        pdf.cell(0, 6, date_str, align="C")
-        pdf.ln(10)
+        pdf.ln(6)
 
         # Body
         pdf.set_text_color(30, 30, 30)
@@ -161,7 +175,34 @@ class ReportBO:
             block = block.strip()
             if not block:
                 continue
-            pdf.multi_cell(0, 6, self._safe(block))
+            if "[Seu Nome]" in block or "[Seu Cargo]" in block or "[Nome da Empresa]" in block:
+                continue
+            pdf.set_x(pdf.l_margin)
+            for line in block.split("\n"):
+                line = line.strip()
+                if not line:
+                    continue
+                if not line.replace("|", "").replace("-", "").replace(" ", "").replace("*", ""):
+                    continue
+                safe_line = self._safe(line)
+                if not safe_line.strip():
+                    continue
+                words = safe_line.split(" ")
+                broken = []
+                for w in words:
+                    if len(w) > 60:
+                        broken.extend(w[i:i+60] for i in range(0, len(w), 60))
+                    else:
+                        broken.append(w)
+                safe_line = " ".join(w for w in broken if w)
+                if not safe_line.strip():
+                    continue
+                try:
+                    pdf.multi_cell(0, 6, safe_line)
+                except Exception as e:
+                    print(f"[PDF] Body render error on '{safe_line[:60]}': {e}")
+                finally:
+                    pdf.set_x(pdf.l_margin)
             pdf.ln(4)
 
         filename = f"relatorio_{client.id}_{datetime.now().strftime('%Y%m')}.pdf"

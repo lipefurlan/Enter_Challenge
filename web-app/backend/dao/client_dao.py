@@ -40,7 +40,7 @@ class ClientDAO:
         )
 
     def get_client_files(self, client_id: str) -> dict[str, str]:
-        client_dir = os.path.join(self.clients_dir, client_id)
+        data_dir = os.path.join(self.clients_dir, client_id, "data")
         file_map = {
             "portfolio_text":    "portfolio.txt",
             "risk_profile_text": "risk_profile.txt",
@@ -50,7 +50,7 @@ class ClientDAO:
         }
         result = {}
         for key, filename in file_map.items():
-            path = os.path.join(client_dir, filename)
+            path = os.path.join(data_dir, filename)
             with open(path, encoding="utf-8") as f:
                 result[key] = f.read()
         return result
