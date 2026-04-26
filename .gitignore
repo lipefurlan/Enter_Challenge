@@ -17,3 +17,7 @@ web-app/output/
 # IDEs
 .vscode/
 .idea/
+
+# Documentos locais
+README.md.docx
+README.md.pdf
