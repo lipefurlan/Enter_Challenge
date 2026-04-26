@@ -1,0 +1,19 @@
+# Node.js
+web-app/rivet-runner/node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Relatórios gerados
+web-app/output/
+
+# Variáveis de ambiente (.env.example vai pro GitHub, .env não)
+.env
+
+# IDEs
+.vscode/
+.idea/

@@ -1,0 +1,9 @@
+{
+  "name": "rivet-runner",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "run_graph.js",
+  "dependencies": {
+    "@ironclad/rivet-node": "^1.10.0"
+  }
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XP — Gerador de Relatórios</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+  <header>
+    <h1>XP Investimentos</h1>
+    <span>/ Gerador de Relatórios Mensais</span>
+  </header>
+
+  <!-- Seleção de clientes -->
+  <div class="card">
+    <h2>Selecione os clientes</h2>
+    <div class="client-list" id="client-list">
+      <p class="empty-msg">Carregando clientes...</p>
+    </div>
+  </div>
+
+  <!-- Ações e progresso -->
+  <div class="card">
+    <div class="actions">
+      <button id="btn-generate" disabled>Gerar Relatórios</button>
+    </div>
+    <div class="progress-bar-wrap" id="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <p id="status-msg"></p>
+  </div>
+
+  <!-- Resultados -->
+  <div class="card" id="results-card" style="display:none">
+    <h2>Relatórios gerados</h2>
+    <div class="results-list" id="results-list"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
