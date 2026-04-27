@@ -21,3 +21,6 @@ web-app/output/
 # Documentos locais
 README.md.docx
 README.md.pdf
+
+# Claude
+.claude/
