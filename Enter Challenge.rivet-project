@@ -157,13 +157,6 @@ data:
           outgoingConnections:
             - response->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/risk_profile
           visualData: 1300.7064682936445/846.3526676584802/230/153//
-        '[5xDoBcWJa6cKYipoybJ3L]:text "Text"':
-          data:
-            normalizeLineEndings: true
-            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\profitability_calc.csv
-          outgoingConnections:
-            - output->"Read File" e7D58nR8VkHXk6Zf7Za66/path
-          visualData: -181.70123093090422/83.74501027515387/330/103//
         '[7vrg95To4eQ1_DGJeYmQY]:chat "Chat - Final"':
           data:
             additionalParameters: []
@@ -200,38 +193,6 @@ data:
           outgoingConnections:
             - data->"Prompt - Risk Profile" UjhTOc5lvzu3q8GmXFE4m/risk_profile
           visualData: 418.1096140126979/698.1345664127792/330/142//
-        '[HH7ZIWuZK6hFaB045d1aX]:text "Text"':
-          data:
-            normalizeLineEndings: true
-            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\dividend_data.csv
-          outgoingConnections:
-            - output->"Read File" uJs2S0v7K1up45c4ZQto1/path
-          visualData: -357.1146732416375/-876.2433292119678/330/148//
-        '[IRmu11M52SqjpMUwMzkU3]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          visualData: 461.8280030057738/950.0322377050547/280/13//
-        '[IWXX4pkv-TESkjtTRysc8]:text "Text"':
-          data:
-            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\risk_profile.txt
-          outgoingConnections:
-            - output->"Read File" IRmu11M52SqjpMUwMzkU3/path
-          visualData: 12.255395731810163/952.5953499889117/330/13//
-        '[JQcM76mHxEdGnPnpnh1Kg]:text "Text"':
-          data:
-            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\portfolio.txt
-          outgoingConnections:
-            - output->"Read File" ecEklxZpVnZv4d8lLa1g4/path
-          visualData: -120.56059524568231/428.13623360673046/330/75//
-        '[MqSgBX7j9HDqr07FZ0NFh]:text "Text"':
-          data:
-            text: C:\projetos\Enter_Challenge\web-app\clients\albert-da-silva\data\macro_analysis.txt
-          outgoingConnections:
-            - output->"Read File" eAziWdaCvhUPtrmsowquf/path
-          visualData: -43.80181005170919/1398.287782434196/330/118//
         '[Tf-lQwMp_N3aFBdj2AXtu]:graphInput "Portfolio Input"':
           data:
             dataType: string
@@ -647,27 +608,6 @@ data:
           outgoingConnections:
             - data->"Equity Signal Analyzer" kkjlZzQ4r3VIsWkmyRHib/dividend_csv
           visualData: 104.47518835470052/-655.38292193053/330/126//
-        '[e7D58nR8VkHXk6Zf7Za66]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          visualData: 305.82685878983494/58.568186671485776/280/104//
-        '[eAziWdaCvhUPtrmsowquf]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          visualData: 460.7192052371219/1400.7146298823588/280/119//
-        '[ecEklxZpVnZv4d8lLa1g4]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          visualData: 335.40266171044584/455.92870731315475/280/65//
         '[g1ilqHJbiNO9cCQpSQYnV]:graphInput "Macro Analysis Input"':
           data:
             dataType: string
@@ -1005,13 +945,6 @@ data:
             - response->"Prompt - Buy/Sell" VUyGoJpSkRmx4BKOTWVW-/portfolio_data
             - response->"Prompt - Final" a5rVOdSyH-BJBRqXT_S8j/portfolio_results
           visualData: 1310.7431160433127/361.980981417884/230/151//
-        '[uJs2S0v7K1up45c4ZQto1]:readFile "Read File"':
-          data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
-          visualData: 159.43039307688971/-900.8878829543871/280/149//
         '[wyJ8JbqwMIhV21LWPMfrU]:prompt "Prompt - Macro"':
           data:
             enableFunctionCall: false
