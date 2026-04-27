@@ -9,11 +9,14 @@
 <body>
 
   <header>
-    <h1>XP Investimentos</h1>
-    <span>/ Gerador de Relatórios Mensais</span>
+    <img src="/static/xp_logo.png" alt="XP" class="header-logo" />
+    <div class="header-text">
+      <h1>XP Investimentos</h1>
+      <span>/ Gerador de Relatórios Mensais</span>
+    </div>
   </header>
 
-  <!-- Seleção de clientes -->
+  <!-- Client selection -->
   <div class="card">
     <h2>Selecione os clientes</h2>
     <div class="client-list" id="client-list">
@@ -21,7 +24,7 @@
     </div>
   </div>
 
-  <!-- Ações e progresso -->
+  <!-- Actions and progress -->
   <div class="card">
     <div class="actions">
       <button id="btn-generate" disabled>Gerar Relatórios</button>
@@ -32,7 +35,7 @@
     <p id="status-msg"></p>
   </div>
 
-  <!-- Resultados -->
+  <!-- Results -->
   <div class="card" id="results-card" style="display:none">
     <h2>Relatórios gerados</h2>
     <div class="results-list" id="results-list"></div>

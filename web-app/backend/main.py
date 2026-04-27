@@ -2,7 +2,7 @@ import os
 import sys
 
 from dotenv import load_dotenv
-load_dotenv()  # carrega o .env automaticamente
+load_dotenv()
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -16,8 +16,8 @@ from routes.report_rest import router
 PUBLIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "public"))
 
 app = FastAPI(
-    title="XP — Gerador de Relatórios Mensais",
-    description="API para geração automatizada de relatórios de investimentos por cliente.",
+    title="XP — Monthly Report Generator",
+    description="API for automated investment report generation per client.",
     version="1.0.0",
 )
 
@@ -30,7 +30,6 @@ app.add_middleware(
 
 app.include_router(router)
 
-# Arquivos estáticos (CSS, JS) em /static — sem conflito com /api
 app.mount("/static", StaticFiles(directory=PUBLIC_DIR), name="static")
 
 

@@ -118,7 +118,6 @@ class ReportBO:
 
     def _export_pdf(self, letter_text: str, client: ClientVO) -> str:
         os.makedirs(OUTPUT_DIR, exist_ok=True)
-        print(f"[PDF] Letter tail: {letter_text[-300:]!r}")
 
         advisor_name = self._safe(client.advisor_name)
         client_email = self._safe(client.email)

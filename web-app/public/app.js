@@ -1,9 +1,9 @@
-const API = '';  // mesmo host — FastAPI serve o frontend e a API
+const API = '';  // same host — FastAPI serves both frontend and API
 
 let allClients = [];
 
 // ------------------------------------------------------------------ //
-// Inicialização: carrega lista de clientes da API
+// Initialization: load client list from API
 // ------------------------------------------------------------------ //
 async function loadClients() {
   try {
@@ -34,7 +34,7 @@ function renderClientList(clients) {
     </label>
   `).join('');
 
-  // Sincroniza visual da label com checkbox
+  // Sync label visual state with checkbox
   document.querySelectorAll('.client-item input').forEach(cb => {
     cb.addEventListener('change', () => {
       cb.closest('.client-item').classList.toggle('selected', cb.checked);
@@ -52,7 +52,7 @@ function getSelectedIds() {
 }
 
 // ------------------------------------------------------------------ //
-// Gera relatórios para os clientes selecionados
+// Generate reports for selected clients
 // ------------------------------------------------------------------ //
 document.getElementById('btn-generate').addEventListener('click', async () => {
   const ids = getSelectedIds();
@@ -81,7 +81,7 @@ document.getElementById('btn-generate').addEventListener('click', async () => {
 });
 
 // ------------------------------------------------------------------ //
-// Renderiza resultados com links de download
+// Render results with download links
 // ------------------------------------------------------------------ //
 function renderResults(results) {
   const card = document.getElementById('results-card');
@@ -113,7 +113,7 @@ function renderResults(results) {
 }
 
 // ------------------------------------------------------------------ //
-// Helpers de UI
+// UI helpers
 // ------------------------------------------------------------------ //
 function setLoading(loading, msg) {
   const btn = document.getElementById('btn-generate');
